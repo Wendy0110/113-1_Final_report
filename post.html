@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHIR 運動紀錄管理 - 上傳</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e7f3e7;
+            border: 1px solid #d4e5d4;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FHIR 運動紀錄管理 - 上傳</h1>
+
+        <!-- JSON輸入 -->
+        <div class="form-group">
+            <label for="patient-json">輸入病人 JSON 資料：</label>
+            <textarea id="patient-json" rows="8" placeholder="請輸入 FHIR Patient JSON 資料"></textarea>
+        </div>
+
+        <button id="upload-button">上傳資料</button>
+
+        <div class="output" id="output">
+            <strong>輸出結果：</strong>
+            <pre id="result"></pre>
+        </div>
+    </div>
+
+    <script>
+    document.getElementById('upload-button').addEventListener('click', () => {
+        try {
+            const jsonData = JSON.parse(document.getElementById('patient-json').value);
+            if (!jsonData.resourceType || jsonData.resourceType !== 'Patient') {
+                alert('請輸入有效的 FHIR Patient JSON 資料');
+                return;
+            }
+
+            // 生成唯一 ID
+            const patientId = `PATIENT-${Date.now()}`;
+            jsonData.id = patientId;
+
+            // 儲存到 localStorage
+            localStorage.setItem(patientId, JSON.stringify(jsonData));
+
+            // 顯示結果
+            document.getElementById('result').textContent = `病人資料已保存！\n病人 ID: ${patientId}\n\n${JSON.stringify(jsonData, null, 2)}`;
+        } catch (error) {
+            alert('請輸入有效的 JSON 格式！');
+        }
+    });
+    </script>
+</body>
+</html>
